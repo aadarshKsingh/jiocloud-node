@@ -28,22 +28,20 @@ class GetFiles {
     while (retries < this.maxRetries) {
       try {
         const response = await axios.get(
-          "https://jaws-api.jiocloud.com/nms/metadata/defaultview/myfiles/v1?limit=10", 
+          "https://jaws-api.jiocloud.com/nms/metadata/defaultview/myfiles/v1", 
           {
             headers,
             params: {
               folderKey: context.rootFolderKey,
             },
-            timeout: 30000, // 30 second timeout
+            timeout: 30000,
             maxContentLength: Infinity,
             maxBodyLength: Infinity,
             httpAgent: new (require('http').Agent)({ keepAlive: true }),
             httpsAgent: new (require('https').Agent)({ keepAlive: true, rejectUnauthorized: false })
           }
         );
-        
         return response.data
-        break; // Success, exit retry loop
       } catch (err) {
         retries++;
         if (err.code === 'ECONNRESET' || err.message.includes('socket hang up')) {

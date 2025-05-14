@@ -1,9 +1,8 @@
 const axios = require("axios");
 const context = require("../context");
 const prompt = require("prompt-sync")();
-const fs = require("fs")
 const path = require("path")
-class VerifyOTP {
+class VerifyOTPOnNumber {
     constructor() {
         this.otp = "";
         this.maxRetries = 3;
@@ -80,4 +79,4 @@ class VerifyOTP {
     }
 }
 
-module.exports = VerifyOTP;
+module.exports = VerifyOTPOnNumber;

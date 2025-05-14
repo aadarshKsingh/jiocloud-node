@@ -1,6 +1,6 @@
 const prompt = require("prompt-sync")();
-const SendOTP = require("./modules/SendOTP");
-const VerifyOTP = require("./modules/VerifyOTP");
+const SendOTPOnNumber = require("./modules/SendOTPOnNumber");
+const VerifyOTPOnNumber = require("./modules/VerifyOTPOnNumber");
 const GetFiles = require("./modules/GetFiles");
 const GetUserData = require("./util/getUserData");
 const refreshAuth = require("./modules/RefreshAuth");
@@ -48,7 +48,7 @@ function refreshAuthToken() {
 async function mainMenu() {
   while (true) {
     console.log("\n==== JioCloud CLI ====");
-    console.log("1. Authenticate");
+    console.log("1. Authenticate with number");
     console.log("2. Show Files");
     console.log("3. Exit");
     console.log("4. Download")
@@ -59,10 +59,10 @@ async function mainMenu() {
 
     switch (choice) {
       case "1":
-        const sendOtpInstance = new SendOTP();
+        const sendOtpInstance = new SendOTPOnNumber();
         await sendOtpInstance.sendOTP();
 
-        const verifyOtpInstance = new VerifyOTP();
+        const verifyOtpInstance = new VerifyOTPOnNumber();
         await verifyOtpInstance.verifyOTP();
 
         const getUserDataInstance = new GetUserData();

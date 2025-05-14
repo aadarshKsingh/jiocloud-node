@@ -8,7 +8,7 @@ const streamPipeline = promisify(pipeline);
 const getFiles = require("./GetFiles");
 
 class DownloadFile {
-    async download(objectKey) {
+    async download(objectKey,dirName) {
         const headers = {
             'if-modified-since': '1743771263693',
             'authorization': 'Basic ' + Buffer.from(context.authToken.accessToken, 'utf-8').toString('base64'),
@@ -29,7 +29,8 @@ class DownloadFile {
             const fileList = new getFiles();
             const files = await fileList.getFiles();
             const file = files['objects'].find(obj => obj.objectKey === objectKey);
-            const response = await axios.get(this.url, {
+            console.log(file)
+            const response = await axios.get(file.url, {
                 headers,
                 responseType: 'stream'
             });2
@@ -39,7 +40,10 @@ class DownloadFile {
             if (disposition && disposition.includes('filename=')) {
                 filename = disposition.split('filename=')[1].replace(/['"]/g, '');
             }
-
+            // if directory doesnt exist, make one
+            if(!fs.existsSync(dirName)){
+                fs.mkdirSync(dirName, { recursive: true });
+            }
             const downloadPath = path.join(__dirname,"..", "Downloads", filename);
             await streamPipeline(response.data, fs.createWriteStream(downloadPath));
             console.log("File downloaded successfully:", filename);
@@ -48,10 +52,6 @@ class DownloadFile {
         }
     }
 
-    async downloadFile(objectKey) {
-        this.promptUserForName();
-        await this.download();
-    }
 }
 
 module.exports = DownloadFile;

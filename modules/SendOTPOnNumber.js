@@ -2,7 +2,7 @@ const axios = require("axios");
 const prompt = require("prompt-sync")();
 const context = require("../context");
 const randomUseragent = require('random-useragent');
-class SendOTP {
+class SendOTPOnNumber {
   constructor() {
     this.mobileNumber = "";
     this.maxRetries = 3;
@@ -94,4 +94,4 @@ class SendOTP {
   }
 }
 
-module.exports = SendOTP;
+module.exports = SendOTPOnNumber;
