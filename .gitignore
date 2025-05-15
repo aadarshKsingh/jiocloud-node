@@ -1,0 +1,21 @@
+# Node.js dependencies
+node_modules/
+
+# Local Downloads directory
+Downloads/
+
+# Optional npm logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Optional environment files
+.env
+.env.local
+.env.*.local
+
+# OS and editor-specific files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
