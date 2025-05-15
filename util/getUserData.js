@@ -21,7 +21,7 @@ class GetUserData {
       'user-agent': 'okhttp/4.9.2'
     }
     const payload = {
-      "userId": context.userAccounts[0].userId,
+      "userId": context.userId,
       "requestId": context.requestId,
       "deviceType": "W",
       "mobileNumber": context.mobileNumber,
@@ -51,7 +51,8 @@ class GetUserData {
             httpsAgent: new (require('https').Agent)({ keepAlive: true, rejectUnauthorized: false })
           }
         );
-        
+        console.log("GET USER DATA")
+        console.log(response.data)
         context.authToken = response.data.authToken;
         context.rootFolderKey = response.data.rootFolderKey;
         context.loginInfo = response.data;

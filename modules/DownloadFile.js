@@ -8,13 +8,14 @@ const streamPipeline = promisify(pipeline);
 const getFiles = require("./GetFiles");
 
 class DownloadFile {
-    async download(objectKey,dirName) {
+    async download(objectKey) {
+        const downloadsDir = path.join(__dirname, "..", "Downloads");
         const headers = {
             'if-modified-since': '1743771263693',
             'authorization': 'Basic ' + Buffer.from(context.authToken.accessToken, 'utf-8').toString('base64'),
             'x-client-details': 'clientType:ANDROID; appVersion:21.13.27',
             'x-session-id': context.loginInfo.sessionId,
-            'x-user-id': context.userAccounts[0].userId,
+            'x-user-id': context.userId,
             'x-app-secret': 'ODc0MDE2M2EtNGY0MC00YmU2LTgwZDUtYjNlZjIxZGRkZjlj',
             'x-api-key': 'c153b48e-d8a1-48a0-a40d-293f1dc5be0e',
             'accept-language': 'en',
@@ -41,10 +42,10 @@ class DownloadFile {
                 filename = disposition.split('filename=')[1].replace(/['"]/g, '');
             }
             // if directory doesnt exist, make one
-            if(!fs.existsSync(dirName)){
-                fs.mkdirSync(dirName, { recursive: true });
+            if(!fs.existsSync(downloadsDir)){
+                fs.mkdirSync(downloadsDir, { recursive: true });
             }
-            const downloadPath = path.join(__dirname,"..", "Downloads", filename);
+            const downloadPath = path.join(downloadsDir, filename);
             await streamPipeline(response.data, fs.createWriteStream(downloadPath));
             console.log("File downloaded successfully:", filename);
         } catch (error) {

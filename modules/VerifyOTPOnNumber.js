@@ -15,63 +15,79 @@ class VerifyOTPOnNumber {
 
     async verify() {
         console.log("Verifying OTP...");
+    
         const headers = {
             "Accept": "application/json; charset=UTF-8",
             "Content-Type": "application/json; charset=UTF-8",
             "Origin": "https://www.jiocloud.com",
             "Referer": "https://www.jiocloud.com/",
-            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36",
+            "user-agent": "Mozilla/5.0",
             "x-client-details": "clientType:ANDROID; appVersion:21.13.27",
             "x-app-secret": "ODc0MDE2M2EtNGY0MC00YmU2LTgwZDUtYjNlZjIxZGRkZjlj",
             "x-api-key": "c153b48e-d8a1-48a0-a40d-293f1dc5be0e",
             "accept-language": "en",
             "Connection": "keep-alive",
         };
-
+    
         const data = {
             mobileNumber: context.mobileNumber,
             otp: this.otp
         };
-
+    
         let retries = 0;
         while (retries < this.maxRetries) {
             try {
                 const response = await axios.post(
-                    "https://api.jiocloud.com/account/jioid/verifyotp", 
-                    data, 
-                    { 
+                    "https://api.jiocloud.com/account/jioid/verifyotp",
+                    data,
+                    {
                         headers,
-                        timeout: 30000, // 30 second timeout
-                        maxContentLength: Infinity,
-                        maxBodyLength: Infinity
+                        timeout: 30000
                     }
                 );
-                
+    
+                console.log("Response:", JSON.stringify(response.data, null, 2));
+    
                 context.requestId = response.data.requestId;
-                context.userAccounts = response.data.userAccounts;
-                console.log("OTP verified successfully.");
-                if(response.status === 412){
-                    console.log("Invalid or expired OTP")
+    
+                if (Array.isArray(response.data.userAccounts)) {
+                    context.userId = response.data.userAccounts[0]?.userId;
+                } else if (typeof response.data.userAccounts === 'object') {
+                    context.userId = response.data.userAccounts.userId;
+                } else {
+                    console.warn("Unexpected userAccounts format.");
                 }
-                console.log(response.data);
-                break; // Success, exit the retry loop
-                
+    
+                console.log("OTP verified successfully.");
+                break;
+    
             } catch (error) {
                 retries++;
-                if (error.code === 'ECONNRESET' || error.message.includes('socket hang up')) {
-                    console.log(`Connection error (socket hangup). Retry ${retries}/${this.maxRetries}...`);
-                    if (retries < this.maxRetries) {
-                        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds before retrying
-                        continue;
+    
+                if (error.response) {
+                    console.error(`Request failed with status ${error.response.status}`);
+                    console.error("Response data:", error.response.data);
+    
+                    if (error.response.status === 412) {
+                        console.error("Invalid or expired OTP.");
+                        break;
                     }
+                } else if (error.request) {
+                    console.error("No response received from server.");
+                } else {
+                    console.error("Error setting up request:", error.message);
                 }
-                console.error("Error verifying OTP:", error.message);
-                if (retries >= this.maxRetries) {
-                    console.error("Max retries reached. Please try again later.");
+    
+                if (retries < this.maxRetries) {
+                    console.log(`Retrying (${retries}/${this.maxRetries})...`);
+                    await new Promise(res => setTimeout(res, 2000));
+                } else {
+                    console.error("Max retries reached.");
                 }
             }
         }
     }
+    
 
     async verifyOTP() {
         this.promptUserForOTP();

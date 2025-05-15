@@ -1,13 +1,15 @@
 const prompt = require("prompt-sync")();
 const SendOTPOnNumber = require("./modules/SendOTPOnNumber");
 const VerifyOTPOnNumber = require("./modules/VerifyOTPOnNumber");
+const SendOTPOnEmail = require("./modules/SendOTPOnEmail");
+const VerifyOTPOnEmail = require("./modules/VerifyOTPOnEmail");
 const GetFiles = require("./modules/GetFiles");
 const GetUserData = require("./util/getUserData");
 const refreshAuth = require("./modules/RefreshAuth");
 const DownloadFile = require("./modules/DownloadFile");
 const Logout = require("./modules/Logout")
 const UploadFile = require("./modules/UploadFile")
-
+const context = require("./context")
 let refreshIntervalStarted = false;
 let refreshInterval = null;
 
@@ -53,6 +55,8 @@ async function mainMenu() {
     console.log("3. Exit");
     console.log("4. Download")
     console.log("5. Upload Test")
+    console.log("6. Auth with email")
+    console.log("7. Show context")
     console.log("======================");
 
     const choice = prompt("Choose an option: ").trim();
@@ -93,7 +97,7 @@ async function mainMenu() {
       case "4":
         const downloadFileInstance = new DownloadFile();
         const objectKey = prompt("Enter object key: ").trim();
-        await downloadFileInstance.download(objectKey);
+        await downloadFileInstance.download(objectKey, "/overlord/Desktop/Downloads");
         break;
       
       case "5":
@@ -101,7 +105,15 @@ async function mainMenu() {
         const path = prompt("Enter file path: ").trim()
         await uploadFileInstance.upload(path)
         break;
+      case "6":
+        const sendOtpEmailInstance = new SendOTPOnEmail();
+        await sendOtpEmailInstance.sendOTP();
 
+        const verifyOtpEmailInstance = new VerifyOTPOnEmail();
+        await verifyOtpEmailInstance.verifyOTP();
+        break;
+      case "7":
+        console.log(context.loginInfo)
       default:
         console.log("Invalid option. Try again.");
     }

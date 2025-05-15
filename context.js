@@ -1,6 +1,7 @@
 module.exports = {
     userData : null,
     userId: null,
+    email: null,
     mobileNumber: null,
     emailId: null,
     requestId: null,
