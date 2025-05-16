@@ -3,7 +3,8 @@ const context = require("../context");
 const path = require("path");
 const GetTransactionId = require("../util/getTransactionId");
 const fs = require("fs");
-const crypto = require("crypto")
+const crypto = require("crypto");
+const getJioHeaders = require('../util/getJioHeaders');
 
 class UploadFile {
     async generateMD5(filePath) {
@@ -18,26 +19,25 @@ class UploadFile {
       }
 
   async upload(filePath) {
-    const baseHeaders = {
-      'if-modified-since': '1743771263693',
-      'authorization': 'Basic ' + Buffer.from(context.authToken.accessToken, 'utf-8').toString('base64'),
-      'x-client-details': 'clientType:ANDROID; appVersion:21.13.27',
+    const headers = getJioHeaders({
       'x-session-id': context.loginInfo.sessionId,
-      'x-user-id': context.userId,
-      'x-app-secret': 'ODc0MDE2M2EtNGY0MC00YmU2LTgwZDUtYjNlZjIxZGRkZjlj',
-      'x-api-key': 'c153b48e-d8a1-48a0-a40d-293f1dc5be0e',
-      'accept-language': 'en',
+      'authorization': 'Basic ' + Buffer.from(context.authToken.accessToken, 'utf-8').toString('base64'),
       'x-device-key': context.loginInfo.deviceKey,
-      'content-type': 'application/octet-stream',
-      'accept-encoding': 'gzip',
-      'user-agent': 'okhttp/4.9.2',
-      'Connection': 'keep-alive',
-    };
+      'X-User-Id': context.userId,
+    });  
 
   let offset = 0;
   let chunkSize = 2 * 1024 * 1024;
   let partNumber = 1;
-  const { transactionId: uploadId } = await new GetTransactionId().getTransactionId(filePath);
+  const transDetails = await new GetTransactionId().getTransactionId(filePath);
+  const uploadId = transDetails.transactionId;
+
+if (!uploadId && transDetails.url) {
+  console.log(transDetails.url);
+  console.log("🎉 Upload complete.");
+}
+
+  console.log(uploadId)
   const uploadUrl = `https://jaws-upload.jiocloud.com/upload/files/chunked?uploadId=${uploadId}`;
   const fileSize = fs.statSync(filePath).size;
   const file = fs.openSync(filePath, "r");
@@ -53,15 +53,17 @@ class UploadFile {
     console.log(`📦 Part ${partNumber}: offset ${offset}, size ${actualChunkSize}, md5 ${md5}`);
   
     try {
+      console.log(offset)
       const response = await axios.put(
         uploadUrl,
         buffer,
         {
           headers: {
-            ...baseHeaders,
+            ...headers,
             "Content-Length": actualChunkSize,
             "Content-MD5": md5,
-            "x-offset": offset,
+            "X-Offset": offset,
+            "Content-Type": "application/octet-stream"
           },
         }
       );

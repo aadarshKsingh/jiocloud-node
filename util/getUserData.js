@@ -1,25 +1,12 @@
 const axios = require('axios');
 const context = require("../context");
+const getJioHeaders = require("../util/getJioHeaders")
 class GetUserData {
   constructor() {
     this.maxRetries = 3;
   }
 
   async getUserData() {
-    const headers = {
-      'if-modified-since': '0',
-      'x-client-details': 'clientType:ANDROID; appVersion:21.13.27',
-      'x-session-id': '09eeabb4e2f544669ba0267695813e5cs',
-      'x-user-id': 'eafe06db8c224623932f7a2932314ca9',
-      'x-app-secret': 'ODc0MDE2M2EtNGY0MC00YmU2LTgwZDUtYjNlZjIxZGRkZjlj',
-      'x-api-key': 'c153b48e-d8a1-48a0-a40d-293f1dc5be0e',
-      'accept-language': 'en',
-      'x-device-key': 'ffffffff-aa6d-51f3-ffff-ffffcd739c56',
-      'content-type': 'application/json; charset=UTF-8',
-      'Connection': 'keep-alive',
-      'accept-encoding': 'gzip',
-      'user-agent': 'okhttp/4.9.2'
-    }
     const payload = {
       "userId": context.userId,
       "requestId": context.requestId,
@@ -43,7 +30,7 @@ class GetUserData {
           "https://www.jiocloud.com/account/jioid/useridlogin",
           payload, 
           {
-            headers,
+            headers: getJioHeaders(),
             timeout: 30000, // 30 second timeout
             maxContentLength: Infinity,
             maxBodyLength: Infinity,

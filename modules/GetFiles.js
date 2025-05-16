@@ -1,5 +1,6 @@
 const axios = require('axios');
 const context = require("../context");
+const getJioHeaders = require("../util/getJioHeaders")
 
 class GetFiles {
   constructor() {
@@ -7,22 +8,13 @@ class GetFiles {
   }
   
   async getFiles() {
-    const headers = {
-      "Accept": "application/json; charset=UTF-8",
-      "Content-Type": "application/json; charset=UTF-8",
-      "Origin": "https://www.jiocloud.com",
-      "Referer": "https://www.jiocloud.com/",
-      "user-agent": "Mozilla/5.0 ...",
-      "authorization": "Basic " + Buffer.from(context.authToken.accessToken, 'utf-8').toString('base64'),
-      "x-client-details": "clientType:ANDROID; appVersion:21.13.27",
-      "x-session-id": context.loginInfo.sessionId,
-      "x-user-id": context.userId,
-      "x-app-secret": "ODc0MDE2M2EtNGY0MC00YmU2LTgwZDUtYjNlZjIxZGRkZjlj",
-      "x-api-key": "c153b48e-d8a1-48a0-a40d-293f1dc5be0e",
-      "accept-language": "en",
-      "x-device-key": context.loginInfo.deviceKey,
-      "Connection": "keep-alive",
-    };
+    const headers = getJioHeaders({
+                'x-session-id': context.loginInfo.sessionId,
+                'x-user-id': context.userId,
+                'authorization': 'Basic ' + Buffer.from(context.authToken.accessToken, 'utf-8').toString('base64'),
+                'x-device-key': context.loginInfo.deviceKey,
+                'X-User-Id': context.userId,
+              })
 
     let retries = 0;
     while (retries < this.maxRetries) {
@@ -30,7 +22,7 @@ class GetFiles {
         const response = await axios.get(
           "https://jaws-api.jiocloud.com/nms/metadata/defaultview/myfiles/v1", 
           {
-            headers,
+            headers: headers,
             params: {
               folderKey: context.rootFolderKey,
             },

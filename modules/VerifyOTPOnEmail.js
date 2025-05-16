@@ -1,6 +1,7 @@
 const axios = require("axios");
 const context = require("../context");
 const prompt = require("prompt-sync")();
+const getJioHeaders = require("../util/getJioHeaders");
 
 class VerifyOTPOnEmail {
     constructor() {
@@ -15,18 +16,6 @@ class VerifyOTPOnEmail {
 
     async verify() {
         console.log("Verifying OTP...");
-        const headers = {
-            "Accept": "application/json; charset=UTF-8",
-            "Content-Type": "application/json; charset=UTF-8",
-            "Origin": "https://www.jiocloud.com",
-            "Referer": "https://www.jiocloud.com/",
-            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36",
-            "x-client-details": "clientType:ANDROID; appVersion:21.13.27",
-            "x-app-secret": "ODc0MDE2M2EtNGY0MC00YmU2LTgwZDUtYjNlZjIxZGRkZjlj",
-            "x-api-key": "c153b48e-d8a1-48a0-a40d-293f1dc5be0e",
-            "accept-language": "en",
-            "Connection": "keep-alive",
-        };
 
         const data = {
             mobileNumber: "",
@@ -52,7 +41,7 @@ class VerifyOTPOnEmail {
                     "https://www.jiocloud.com/account/otp/login", 
                     data, 
                     { 
-                        headers,
+                        headers: getJioHeaders(),
                         timeout: 30000, // 30 second timeout
                         maxContentLength: Infinity,
                         maxBodyLength: Infinity

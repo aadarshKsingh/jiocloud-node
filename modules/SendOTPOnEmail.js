@@ -1,8 +1,7 @@
 const axios = require("axios");
 const prompt = require("prompt-sync")();
 const context = require("../context");
-const randomUseragent = require('random-useragent');
-
+const getJioHeaders = require("../util/getJioHeaders");
 class SendOTPOnEmail {
   constructor() {
     this.email = "";
@@ -18,25 +17,6 @@ class SendOTPOnEmail {
 
   async send() {
     console.log("Sending OTP...");
-
-    const headers = {
-      'if-modified-since': '1743771263693',
-      "Accept": "application/json; charset=UTF-8",
-      "Content-Type": "application/json; charset=UTF-8",
-      "Origin": "https://www.jiocloud.com",
-      "Referer": "https://www.jiocloud.com/",
-      "user-agent": randomUseragent.getRandom(),
-      "x-client-details": "clientType:ANDROID; appVersion:21.13.27",
-      "x-app-secret": "ODc0MDE2M2EtNGY0MC00YmU2LTgwZDUtYjNlZjIxZGRkZjlj",
-      "x-api-key": "c153b48e-d8a1-48a0-a40d-293f1dc5be0e",
-      "accept-language": "en",
-      "x-Device-Type": "W",
-      "Connection": "keep-alive",
-      "sec-ch-ua": '"Chromium";v="134", "Not:A-Brand";v="24", "Google Chrome";v="134"',
-      "sec-ch-ua-mobile": "?0",
-      "sec-ch-ua-platform": '"Windows"',
-    };
-
     const data = {
       "emailId": this.email,
     };
@@ -48,7 +28,7 @@ class SendOTPOnEmail {
           "https://api.jiocloud.com/account/login/otp/send", 
           data, 
           { 
-            headers,
+            headers: getJioHeaders(),
             timeout: 30000, // 30 second timeout
             maxContentLength: Infinity,
             maxBodyLength: Infinity,
@@ -80,7 +60,7 @@ class SendOTPOnEmail {
           process.exit();
         }
         
-        console.error("Error sending OTP:", err.message);
+        console.error("Error sending OTP:", err.error);
         if (retries >= this.maxRetries) {
           console.error("Max retries reached. Please try again later.");
         }

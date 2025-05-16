@@ -1,7 +1,7 @@
 const axios = require("axios");
 const context = require("../context");
 const prompt = require("prompt-sync")();
-const path = require("path")
+const getJioHeaders = require("../util/getJioHeaders");
 class VerifyOTPOnNumber {
     constructor() {
         this.otp = "";
@@ -16,18 +16,7 @@ class VerifyOTPOnNumber {
     async verify() {
         console.log("Verifying OTP...");
     
-        const headers = {
-            "Accept": "application/json; charset=UTF-8",
-            "Content-Type": "application/json; charset=UTF-8",
-            "Origin": "https://www.jiocloud.com",
-            "Referer": "https://www.jiocloud.com/",
-            "user-agent": "Mozilla/5.0",
-            "x-client-details": "clientType:ANDROID; appVersion:21.13.27",
-            "x-app-secret": "ODc0MDE2M2EtNGY0MC00YmU2LTgwZDUtYjNlZjIxZGRkZjlj",
-            "x-api-key": "c153b48e-d8a1-48a0-a40d-293f1dc5be0e",
-            "accept-language": "en",
-            "Connection": "keep-alive",
-        };
+;
     
         const data = {
             mobileNumber: context.mobileNumber,
@@ -41,7 +30,7 @@ class VerifyOTPOnNumber {
                     "https://api.jiocloud.com/account/jioid/verifyotp",
                     data,
                     {
-                        headers,
+                        headers: getJioHeaders(),
                         timeout: 30000
                     }
                 );
