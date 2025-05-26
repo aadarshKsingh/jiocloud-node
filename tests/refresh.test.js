@@ -11,7 +11,7 @@ describe("auth test",()=>{
 
     test('should start token refresh interval',async()=>{
         jest.useFakeTimers();
-        const auth = require("../modules/Auth");
+        const auth = require("../modules/AuthNumber");
         auth.startTokenRefresh();
         expect(RefreshAuth).not.toHaveBeenCalledWith();
         expect(RefreshAuth.prototype.refreshAuth).toHaveBeenCalledTimes(0); // Not called immediately

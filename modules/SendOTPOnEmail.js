@@ -4,21 +4,14 @@ const context = require("../context");
 const getJioHeaders = require("../util/getJioHeaders");
 class SendOTPOnEmail {
   constructor() {
-    this.email = "";
     this.maxRetries = 3;
   }
 
-  promptUserForEmail() {
-    const email = prompt("Enter your email: ");
-    this.email = email;
-    context.email = email;
-    return email;
-  }
 
-  async send() {
-    console.log("Sending OTP...");
+  async send(email) {
+    context.email = email;
     const data = {
-      "emailId": this.email,
+      "emailId": email,
     };
 
     let retries = 0;
@@ -68,8 +61,7 @@ class SendOTPOnEmail {
     }
   }
 
-  async sendOTP() {
-    this.promptUserForEmail();
+  async sendOTP(email) {
     await this.send();
   }
 }

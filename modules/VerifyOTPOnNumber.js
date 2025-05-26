@@ -14,10 +14,6 @@ class VerifyOTPOnNumber {
     }
 
     async verify() {
-        console.log("Verifying OTP...");
-    
-;
-    
         const data = {
             mobileNumber: context.mobileNumber,
             otp: this.otp
@@ -34,9 +30,7 @@ class VerifyOTPOnNumber {
                         timeout: 30000
                     }
                 );
-    
-                console.log("Response:", JSON.stringify(response.data, null, 2));
-    
+        
                 context.requestId = response.data.requestId;
     
                 if (Array.isArray(response.data.userAccounts)) {
