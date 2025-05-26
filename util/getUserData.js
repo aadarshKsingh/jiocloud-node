@@ -38,8 +38,6 @@ class GetUserData {
             httpsAgent: new (require('https').Agent)({ keepAlive: true, rejectUnauthorized: false })
           }
         );
-        console.log("GET USER DATA")
-        console.log(response.data)
         context.authToken = response.data.authToken;
         context.rootFolderKey = response.data.rootFolderKey;
         context.loginInfo = response.data;

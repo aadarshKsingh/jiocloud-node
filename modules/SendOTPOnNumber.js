@@ -5,23 +5,14 @@ const getJioHeaders = require("../util/getJioHeaders");
 
 class SendOTPOnNumber {
   constructor() {
-    this.mobileNumber = "";
     this.maxRetries = 3;
   }
 
-  promptUserForMobileNumber() {
-    const number = prompt("Enter your mobile number: ");
-    this.mobileNumber = number;
-    context.mobileNumber = number;
-    return number;
-  }
+  async send(mobileNumber) {
+    context.mobileNumber = mobileNumber
 
-  async send() {
-    console.log("Sending OTP...");
-
-    // If mobile number is part of the request body, send it in the data object (replace with real key if necessary)
     const data = {
-      "mobileNumber": this.mobileNumber, // Example, make sure this matches the actual API requirement
+      "mobileNumber": mobileNumber
     };
 
     let retries = 0;
@@ -42,7 +33,7 @@ class SendOTPOnNumber {
         console.log(response);
         if (response.status === 204) {
           console.log("OTP sent successfully");
-          break; // Success, exit retry loop
+          break;
         } 
         else {
           console.log("Failed to send OTP");
@@ -71,8 +62,7 @@ class SendOTPOnNumber {
     }
   }
 
-  async sendOTP() {
-    this.promptUserForMobileNumber();
+  async sendOTP(mobileNumber) {
     await this.send();
   }
 }
