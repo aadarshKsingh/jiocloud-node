@@ -33,7 +33,8 @@ class GetFiles {
             httpsAgent: new (require('https').Agent)({ keepAlive: true, rejectUnauthorized: false })
           }
         );
-        return response.data
+        const files = response.data.objects;
+        return files
       } catch (err) {
         retries++;
         if (err.code === 'ECONNRESET' || err.message.includes('socket hang up')) {
@@ -70,7 +71,8 @@ class GetFiles {
                 httpsAgent: new (require('https').Agent)({ keepAlive: true, rejectUnauthorized: false })
               }
             );
-            return response.data
+            const files = response.data.objects;
+            return files;
           } catch (refreshErr) {
             console.error("Final attempt failed after token refresh:", refreshErr.message);
           }

@@ -2,7 +2,7 @@
   "name": "jiocloud-sdk",
   "version": "1.0.0",
   "description": "sdk for ril jiocloud",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
     "test": "jest --detectOpenHandles"
   },

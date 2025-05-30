@@ -30,7 +30,7 @@ class SendOTPOnNumber {
             httpsAgent: new (require('https').Agent)({ keepAlive: true, rejectUnauthorized: false })
           }
         );
-        console.log(response);
+        // console.log(response);
         if (response.status === 204) {
           console.log("OTP sent successfully");
           break;
@@ -63,7 +63,7 @@ class SendOTPOnNumber {
   }
 
   async sendOTP(mobileNumber) {
-    await this.send();
+    await this.send(mobileNumber);
   }
 }
 
