@@ -8,8 +8,9 @@ const streamPipeline = promisify(pipeline);
 const getFiles = require("./GetFiles");
 const getJioHeaders = require("../util/getJioHeaders")
 class DownloadFile {
-    async download(objectKey) {
-        const downloadsDir = path.join(__dirname, "..", "Downloads");
+    async download(objectKey,downloadDir) {
+        console.log(downloadDir)
+        const downloadsDir = path.join(downloadDir);
 
         const headers = getJioHeaders({
                     'x-session-id': context.loginInfo.sessionId,
@@ -23,7 +24,7 @@ class DownloadFile {
 
             const fileList = new getFiles();
             const files = await fileList.getFiles();
-            const file = files['objects'].find(obj => obj.objectKey === objectKey);
+            const file = files.find(obj => obj.objectKey === objectKey);
             console.log(file)
             const response = await axios.get(file.url, {
                 headers: headers,

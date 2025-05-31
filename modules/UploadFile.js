@@ -30,14 +30,10 @@ class UploadFile {
   let chunkSize = 2 * 1024 * 1024;
   let partNumber = 1;
   const transDetails = await new GetTransactionId().getTransactionId(filePath);
+  if (transDetails?.url) {
+    return transDetails.url;
+  }
   const uploadId = transDetails.transactionId;
-
-if (!uploadId && transDetails.url) {
-  console.log(transDetails.url);
-  console.log("🎉 Upload complete.");
-}
-
-  console.log(uploadId)
   const uploadUrl = `https://jaws-upload.jiocloud.com/upload/files/chunked?uploadId=${uploadId}`;
   const fileSize = fs.statSync(filePath).size;
   const file = fs.openSync(filePath, "r");
@@ -49,11 +45,8 @@ if (!uploadId && transDetails.url) {
     fs.readSync(file, buffer, 0, actualChunkSize, offset);
   
     const md5 = crypto.createHash("md5").update(buffer).digest("hex");
-    console.log(md5)
-    console.log(`📦 Part ${partNumber}: offset ${offset}, size ${actualChunkSize}, md5 ${md5}`);
   
     try {
-      console.log(offset)
       const response = await axios.put(
         uploadUrl,
         buffer,
@@ -68,13 +61,10 @@ if (!uploadId && transDetails.url) {
         }
       );
   
-      console.log(`✅ Uploaded part ${partNumber}:`, response.status);
   
       // Check if upload completed
       if (response.data.objectKey) {
-        objectKey = response.data.objectKey;
-        console.log("✅ Upload completed. objectKey:", objectKey);
-        break;
+        return response.data.url;
       }
   
       // Update offset if present
@@ -88,14 +78,10 @@ if (!uploadId && transDetails.url) {
       partNumber++;
   
     } catch (err) {
-      console.error(`❌ Failed at part ${partNumber}:`, err);
-      break;
+      return 0;
     }
-  }
-  
-  console.log(objectKey)
+  }  
   fs.closeSync(file);
-  console.log("🎉 Upload complete.");
 }
 }
 

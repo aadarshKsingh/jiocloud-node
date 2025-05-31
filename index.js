@@ -60,12 +60,12 @@ module.exports = {
 
   upload: async function upload(filePath) {
     const uploader = new UploadFile();
-    await uploader.upload(filePath);
+    return await uploader.upload(filePath);
   },
 
-  download: async function download(objectKey) {
+  download: async function download(objectKey,downloadDir) {
     const downloader = new DownloadFile();
-    await downloader.download(objectKey, destPath);
+    await downloader.download(objectKey,downloadDir);
   },
 
   getFiles: async function getFiles() {

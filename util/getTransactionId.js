@@ -48,7 +48,6 @@ class GetTransactionId{
 
         try{
             const response = await axios.post("https://jaws-upload.jiocloud.com/upload/files/chunked/initiate",payload,{headers})
-            console.log(response.data)
             return response.data
         }
         catch(err){

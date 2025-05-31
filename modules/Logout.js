@@ -29,7 +29,7 @@ class Logout {
                 console.log("Successfully logged out")
             }
         }catch(err){
-            console.log("Error occurred "+err.errors)
+            console.log("Error occurred "+err)
         }
     }
 }
