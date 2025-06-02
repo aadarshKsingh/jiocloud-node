@@ -26,7 +26,6 @@ class Logout {
 
         try{
             const response = await axios.put("https://api.jiocloud.com/security/users/logout", payload , { headers })
-            console.log(response.data);
             if(response.status === 204){
                 console.log("Successfully logged out")
             }
