@@ -30,14 +30,13 @@ class SendOTPOnNumber {
             httpsAgent: new (require('https').Agent)({ keepAlive: true, rejectUnauthorized: false })
           }
         );
-        // console.log(response);
         if (response.status === 204) {
           console.log("OTP sent successfully");
-          break;
+          return 0
         } 
         else {
           console.log("Failed to send OTP");
-          break;
+          return 1
         }
       } catch (err) {
         retries++;
@@ -54,7 +53,11 @@ class SendOTPOnNumber {
           process.exit();
         }
         
-        console.error("Error sending OTP:", err);
+        if(err.status === 400) {
+          console.log(err.response.data.error);
+          process.exit();
+        }
+
         if (retries >= this.maxRetries) {
           console.error("Max retries reached. Please try again later.");
         }

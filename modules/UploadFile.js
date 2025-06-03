@@ -1,6 +1,5 @@
 const axios = require('axios');
 const context = require("../context");
-const path = require("path");
 const GetTransactionId = require("../util/getTransactionId");
 const fs = require("fs");
 const crypto = require("crypto");
@@ -17,8 +16,21 @@ class UploadFile {
           stream.on('error', (err) => reject(err));
         });
       }
-
+  checkFileExists(filePath) {
+        if (fs.existsSync(filePath)) {
+          console.log("File exists.");
+          return true;
+        } else {
+          console.log("Doesn't exist");
+          return false;
+        }
+      }
+      
   async upload(filePath) {
+    if (!this.checkFileExists(filePath)) {
+      console.error("File does not exist:", filePath);
+      return 1;
+    }
     const headers = getJioHeaders({
       'x-session-id': context.loginInfo.sessionId,
       'authorization': 'Basic ' + Buffer.from(context.authToken.accessToken, 'utf-8').toString('base64'),

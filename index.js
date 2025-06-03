@@ -52,9 +52,6 @@ module.exports = {
     const verifyOtpEmailInstance = new VerifyOTPOnEmail();
     await verifyOtpEmailInstance.verifyOTP();
 
-    const getUserDataInstance = new GetUserData();
-    await getUserDataInstance.getUserData();
-
     startTokenRefresh();
   },
 

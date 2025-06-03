@@ -8,8 +8,23 @@ const streamPipeline = promisify(pipeline);
 const getFiles = require("./GetFiles");
 const getJioHeaders = require("../util/getJioHeaders")
 class DownloadFile {
+    ensureDownloadDir(downloadDir) {
+        if (!fs.existsSync(downloadDir)) {
+          fs.mkdirSync(downloadDir, { recursive: true });
+          console.log(`Created directory: ${downloadDir}`);
+        } else {
+          console.log(`Directory already exists: ${downloadDir}`);
+        }
+      }
     async download(objectKey,downloadDir) {
-        console.log(downloadDir)
+        if (!objectKey) {
+            console.error("Object key is required for downloading.");
+            return;
+        }
+        if (!downloadDir) {
+            console.error("Download directory is required.");
+            return;
+        }
         const downloadsDir = path.join(downloadDir);
 
         const headers = getJioHeaders({

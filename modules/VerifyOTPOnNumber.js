@@ -14,68 +14,60 @@ class VerifyOTPOnNumber {
     }
 
     async verify() {
-        const data = {
-            mobileNumber: context.mobileNumber,
-            otp: this.otp
-        };
-    
-        let retries = 0;
-        while (retries < this.maxRetries) {
-            try {
-                const response = await axios.post(
-                    "https://api.jiocloud.com/account/jioid/verifyotp",
-                    data,
-                    {
-                        headers: getJioHeaders(),
-                        timeout: 30000
-                    }
-                );
-        
-                context.requestId = response.data.requestId;
-    
-                if (Array.isArray(response.data.userAccounts)) {
-                    context.userId = response.data.userAccounts[0]?.userId;
-                } else if (typeof response.data.userAccounts === 'object') {
-                    context.userId = response.data.userAccounts.userId;
-                } else {
-                    console.warn("Unexpected userAccounts format.");
-                }
-    
-                console.log("OTP verified successfully.");
-                break;
-    
-            } catch (error) {
-                retries++;
-    
-                if (error.response) {
-                    console.error(`Request failed with status ${error.response.status}`);
-                    console.error("Response data:", error.response.data);
-    
-                    if (error.response.status === 412) {
-                        console.error("Invalid or expired OTP.");
-                        break;
-                    }
-                } else if (error.request) {
-                    console.error("No response received from server.");
-                } else {
-                    console.error("Error setting up request:", error.message);
-                }
-    
-                if (retries < this.maxRetries) {
-                    console.log(`Retrying (${retries}/${this.maxRetries})...`);
-                    await new Promise(res => setTimeout(res, 2000));
-                } else {
-                    console.error("Max retries reached.");
-                }
-            }
-        }
-    }
-    
-
-    async verifyOTP() {
+      let retries = 0;
+      while (retries < this.maxRetries) {
         this.promptUserForOTP();
-        await this.verify();
-    }
-}
+    
+        const data = {
+          mobileNumber: context.mobileNumber,
+          otp: this.otp
+        };
+        try {
+          const response = await axios.post(
+            "https://api.jiocloud.com/account/jioid/verifyotp",
+            data,
+            {
+              headers: getJioHeaders(),
+              timeout: 30000
+            }
+          );
 
-module.exports = VerifyOTPOnNumber;
+          context.requestId = response.data.requestId;  
+          if (Array.isArray(response.data.userAccounts)) {
+            context.userId = response.data.userAccounts[0]?.userId;
+          } else if (typeof response.data.userAccounts === "object") {
+            context.userId = response.data.userAccounts.userId;
+          }
+
+          console.log("OTP verified successfully.");
+          return;
+ 
+        } catch (error) {
+          retries++;
+  
+          if (error.response) {
+            const message = error.response.data?.error || "OTP verification failed.";
+            console.error(`Invalid OTP`);
+          } else if (error.request) {
+            console.error("No response received from server.");
+          } else {
+            console.error("Request error:", error.message);
+          }
+  
+          if (retries >= this.maxRetries) {
+            console.error("Max retries reached. Exiting.");
+            process.exit(1);
+          }
+  
+          await new Promise(res => setTimeout(res, 1000)); // Small delay before retry
+        }
+      }
+    }
+  
+    async verifyOTP() {
+      await this.verify();
+    }
+  }
+  
+  module.exports = VerifyOTPOnNumber;
+  

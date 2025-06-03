@@ -46,8 +46,6 @@ class RefreshAuth {
                         httpsAgent: new (require('https').Agent)({ keepAlive: true, rejectUnauthorized: false })
                     }
                 );
-                console.log("refresh called");
-                console.log(response);
                 context.authToken.accessToken = response.data.accessToken;
                 context.authToken.refreshToken = response.data.refreshToken;
                 break; // Success, exit retry loop
@@ -60,7 +58,6 @@ class RefreshAuth {
                         continue;
                     }
                 }
-                console.log(err);
                 console.log("Error refreshing auth token:", err.message);
                 if (retries >= this.maxRetries) {
                     console.log("Max retries reached. Please re-authenticate.");
